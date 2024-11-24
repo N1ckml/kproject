@@ -23,7 +23,7 @@
 
         <!-- Main Section -->
         <main class="p-6">  
-            <h1 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-black">Gestión de <mark class="px-1 text-white bg-blue-600 rounded dark:bg-blue-500">usuarios</mark> over your days</h1>
+            <h1 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-black">Gestión de <mark class="px-1 text-white bg-blue-600 rounded dark:bg-blue-500">proyectos</mark> over your days</h1>
             <hr class="border-t-2 border-black">
             
         </main>
