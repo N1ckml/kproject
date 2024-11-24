@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite('resources/css/app.css')
-    <title>cyc</title>
+    <title>KPROYECT</title>
 </head>
 <body class="antialiased bg-gray-50 dark:bg-gray-300 flex">
 
@@ -23,7 +23,7 @@
 
         <!-- Main Section -->
         <main class="p-6">  
-            <h1 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-black">Gestión de <mark class="px-1 text-white bg-blue-600 rounded dark:bg-blue-500">usuarios</mark> over your days</h1>
+            <h1 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-black">KPROYECT <mark class="px-1 text-white bg-blue-600 rounded dark:bg-blue-500">DASHBOARD</mark></h1>
             <hr class="border-t-2 border-black">
             
         </main>
