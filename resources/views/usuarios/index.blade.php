@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @vite('resources/css/app.css')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Gestión de Usuarios</title>
-    @vite('resources/css/app.css')
     <!-- Estilos de DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <!-- Estilos personalizados -->
     <style>
         .table-container {
@@ -90,14 +89,27 @@
         }
     </style>
 </head>
-<x-sidebar />
-<main>
-<body>
-    
-    <div class="flex-1 ml-[250px]"> <!-- Ajustamos el margen izquierdo para respetar el ancho del sidebar -->
-        <h1>Gestión de Usuarios</h1>
 
-        <!-- Botón para Crear Usuario -->
+<body class="antialiased bg-gray-50 dark:bg-gray-300 flex">
+
+    <!-- Sidebar -->
+    <x-sidebar />
+
+    <!-- Main Content -->
+    <div class="flex-1 ml-[250px]"> <!-- Ajustamos el margen izquierdo para respetar el ancho del sidebar -->
+        <!-- Header -->
+        <header class="bg-white shadow-md px-6 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl font-bold text-gray-800">Dashboard</h1>
+                <p class="text-sm text-gray-600">Bienvenido, <span class="font-medium text-gray-800">Usuario</span></p>
+            </div>
+        </header>
+
+        <!-- Main Section -->
+        <main class="p-6">  
+            <h1 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-black">GESTION <mark class="px-1 text-white bg-blue-600 rounded dark:bg-blue-500">USUARIOS</mark></h1>
+            <hr class="border-t-2 border-black">
+            <!-- Botón para Crear Usuario -->
         <button onclick="openModal('create')" class="btn btn-create">
             Nuevo Usuario
         </button>
@@ -115,12 +127,16 @@
                 </thead>
             </table>
         </div>
-    </div>
-    </main>
-    @include('usuarios.action')
 
-    <!-- Scripts -->
-    <script>
+        </main>
+        @include('usuarios.action')
+    </div>
+</body>
+
+</html>
+
+<!-- Scripts -->
+<script>
         $(document).ready(function () {
             $('#users-table').DataTable({
                 processing: true,
@@ -240,5 +256,3 @@
             });
         }
     </script>
-</body>
-</html>
