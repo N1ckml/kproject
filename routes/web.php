@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProjectController;
 
 //Usuarios:
 // USUARIOS
@@ -13,6 +14,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/usuarios/{id}', [UserController::class, 'show'])->name('usuarios.show');
     Route::put('/usuarios/{id}', [UserController::class, 'update'])->name('usuarios.update');
     Route::delete('/usuarios/{id}', [UserController::class, 'destroy'])->name('usuarios.destroy');
+
+    Route::get('/proyectos', [ProjectController::class, 'index'])->name('proyectos.index');
+    Route::get('/proyectos/data', [ProjectController::class, 'getData'])->name('proyectos.data');
+    Route::post('/proyectos', [ProjectController::class, 'store'])->name('proyectos.store');
+    Route::get('/proyectos/{id}', [ProjectController::class, 'show'])->name('proyectos.show');
+    Route::put('/proyectos/{id}', [ProjectController::class, 'update'])->name('proyectos.update');
+    Route::delete('/proyectos/{id}', [ProjectController::class, 'destroy'])->name('proyectos.destroy');
 });
 
 
