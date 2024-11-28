@@ -15,11 +15,12 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next, $role)
     {
         // Verifica si el usuario está autenticado y tiene el rol requerido
-        if (Auth::check() && Auth::user()->role === $role) {
+        if (Auth::check() && Auth::user()->role == $role) {
             return $next($request);
         }
+        
 
         // Si no tiene acceso, redirigir
-        return redirect('/')->with('error', 'No tienes permiso para acceder a esta página.');
-}
+        return redirect('/home-users')->with('error', 'No tienes permiso para acceder a esta página.');
+    }
 }
