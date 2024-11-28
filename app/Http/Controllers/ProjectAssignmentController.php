@@ -9,15 +9,15 @@ use Illuminate\Http\Request;
 class ProjectAssignmentController extends Controller
 {
     /**
-     * Muestra la vista de asignación.
+     * Muestra el listado de proyectos y usuarios asociados.
      */
     public function index()
     {
-        return view('asignar.index'); // Vista de asignación
+        return view('asignar.index'); // Retorna la vista de asignación
     }
 
     /**
-     * Retorna los datos de proyectos con usuarios asignados para Datatables.
+     * Retorna los datos para la tabla de proyectos (Datatables).
      */
     public function getProjects()
     {
@@ -25,11 +25,13 @@ class ProjectAssignmentController extends Controller
     
         return datatables()->of($projects)
             ->addColumn('actions', function ($project) {
-                $users = User::all(); // Obtener usuarios para el modal de asignación
-                return view('asignar.action', compact('project', 'users'))->render();
+                $users = User::all(); // Obtener todos los usuarios para los modales
+                return view('asignar.action', compact('project', 'users'))->render(); // Renderizar el contenido HTML del modal
             })
+            ->rawColumns(['actions']) // Especificar que la columna 'actions' contiene HTML sin escapar
             ->toJson();
     }
+
 
     /**
      * Asigna un usuario a un proyecto.
@@ -41,10 +43,10 @@ class ProjectAssignmentController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        $project = Project::findOrFail($request->project_id);
+        $project = Project::find($request->project_id);
         $project->users()->attach($request->user_id);
 
-        return response()->json(['message' => 'Usuario asignado correctamente.']);
+        return response()->json(['message' => 'Usuario asignado al proyecto exitosamente.']);
     }
 
     /**
@@ -57,9 +59,9 @@ class ProjectAssignmentController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        $project = Project::findOrFail($request->project_id);
+        $project = Project::find($request->project_id);
         $project->users()->detach($request->user_id);
 
-        return response()->json(['message' => 'Usuario retirado correctamente.']);
+        return response()->json(['message' => 'Usuario retirado del proyecto exitosamente.']);
     }
 }

@@ -62,6 +62,11 @@ class User extends Authenticatable
         return $value;  // "Admin" o "User"
     }
 
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_user');
+    }
+
     /**
      * Valida si un rol es válido.
      *
