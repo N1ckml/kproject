@@ -25,9 +25,9 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::put('/proyectos/{id}', [ProjectController::class, 'update'])->name('proyectos.update');
     Route::delete('/proyectos/{id}', [ProjectController::class, 'destroy'])->name('proyectos.destroy');
 
-    //Route::get('/fases', [ProjectController::class, 'index'])->name('fases.index');
-    //Route::get('/tareas', [ProjectController::class, 'index'])->name('tareas.index');
-    //Route::get('/asignar', [ProjectController::class, 'index'])->name('asignar.index');
+    //Route::get('/fases', [PhaseController::class, 'index'])->name('fases.index');
+    //Route::get('/tareas', [TaksController::class, 'index'])->name('tareas.index');
+    //Route::get('/asignar', [AssignController::class, 'index'])->name('asignar.index');
 });
 
 Route::get('/fases', function () {
