@@ -25,10 +25,22 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::put('/proyectos/{id}', [ProjectController::class, 'update'])->name('proyectos.update');
     Route::delete('/proyectos/{id}', [ProjectController::class, 'destroy'])->name('proyectos.destroy');
 
-    Route::get('/fases', [ProjectController::class, 'index'])->name('fases.index');
-    Route::get('/tareas', [ProjectController::class, 'index'])->name('tareas.index');
-    Route::get('/asignar', [ProjectController::class, 'index'])->name('asignar.index');
+    //Route::get('/fases', [ProjectController::class, 'index'])->name('fases.index');
+    //Route::get('/tareas', [ProjectController::class, 'index'])->name('tareas.index');
+    //Route::get('/asignar', [ProjectController::class, 'index'])->name('asignar.index');
 });
+
+Route::get('/fases', function () {
+    return view('fases.index');
+})->name('fases.index');
+
+Route::get('/tareas', function () {
+    return view('tareas.index');
+})->name('tareas.index');
+
+Route::get('/asignar', function () {
+    return view('asignar.index');
+})->name('asignar.index');
 
 Route::middleware('auth', 'role:user')->group(function () {
     Route::view('/home-users', 'home-users')->name('home-users'); // Asegúrate de que `home-users.blade.php` esté en `resources/views`
