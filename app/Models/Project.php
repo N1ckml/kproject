@@ -16,6 +16,11 @@ class Project extends Model
     {
         return $this->belongsToMany(User::class, 'project_user');
     }
+
+    public function phases()
+    {
+        return $this->hasMany(Phase::class)->orderBy('order');
+    }
 }
 
 
