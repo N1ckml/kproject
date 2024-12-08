@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @vite('resources/css/app.css')
+    @vite(['resources/css/styles.css', 'resources/css/app.css']) <!-- Importar estilos -->
     <title>cyc</title>
-    ////////////////
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Gestión de Proyectos</title>
     <!-- Estilos de DataTables -->
@@ -13,83 +12,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Estilos personalizados -->
-    <style>
-        .table-container {
-            margin: 20px auto;
-            max-width: 1200px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead tr {
-            background-color: #f4f4f4;
-        }
-
-        th, td {
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tbody tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        th {
-            text-transform: uppercase;
-            font-weight: bold;
-            color: #444;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .btn-edit {
-            background-color: #28a745;
-        }
-
-        .btn-edit:hover {
-            background-color: #218838;
-        }
-
-        .btn-delete {
-            background-color: #dc3545;
-        }
-
-        .btn-delete:hover {
-            background-color: #c82333;
-        }
-
-        .btn-create {
-            background-color: #007bff;
-            margin-bottom: 20px;
-            padding: 10px 16px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .btn-create:hover {
-            background-color: #0056b3;
-        }
-    </style>
 </head>
 
 <body class="antialiased bg-gray-50 dark:bg-gray-300 flex">

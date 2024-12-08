@@ -19,7 +19,7 @@ class Project extends Model
 
     public function phases()
     {
-        return $this->hasMany(Phase::class)->orderBy('order');
+        return $this->hasMany(Phase::class);
     }
 }
 
