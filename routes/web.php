@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectAssignmentController;
-
+use App\Http\Controllers\PhaseController;
 // USUARIOS
 Route::middleware('auth', 'role:admin')->group(function () {
 
@@ -25,22 +25,25 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::put('/proyectos/{id}', [ProjectController::class, 'update'])->name('proyectos.update');
     Route::delete('/proyectos/{id}', [ProjectController::class, 'destroy'])->name('proyectos.destroy');
 
-    //Route::get('/fases', [PhaseController::class, 'index'])->name('fases.index');
+    Route::get('/asignar', [ProjectAssignmentController::class, 'index'])->name('asignar.index');
+    Route::get('/asignar/projects', [ProjectAssignmentController::class, 'getProjects'])->name('asignar.projects');
+    Route::post('/asignar/assign', [ProjectAssignmentController::class, 'assignUser'])->name('asignar.assign');
+    Route::post('/asignar/remove', [ProjectAssignmentController::class, 'removeUser'])->name('asignar.remove');
+
+    // Rutas para Fases
+    Route::get('/fases', [PhaseController::class, 'index'])->name('fases.index');
+    Route::get('/fases/data', [PhaseController::class, 'getData'])->name('fases.data'); // Ruta para obtener las fases para DataTables
+    Route::post('/fases', [PhaseController::class, 'store'])->name('fases.store');
+    Route::get('/fases/{id}', [PhaseController::class, 'show'])->name('fases.show');
+    Route::put('/fases/{id}', [PhaseController::class, 'update'])->name('fases.update');
+    Route::delete('/fases/{id}', [PhaseController::class, 'destroy'])->name('fases.destroy');
     //Route::get('/tareas', [TaksController::class, 'index'])->name('tareas.index');
-    //Route::get('/asignar', [AssignController::class, 'index'])->name('asignar.index');
 });
 
-Route::get('/fases', function () {
-    return view('fases.index');
-})->name('fases.index');
 
 Route::get('/tareas', function () {
     return view('tareas.index');
 })->name('tareas.index');
-
-Route::get('/asignar', function () {
-    return view('asignar.index');
-})->name('asignar.index');
 
 Route::middleware('auth', 'role:user')->group(function () {
     Route::view('/home-users', 'home-users')->name('home-users'); // Asegúrate de que `home-users.blade.php` esté en `resources/views`
@@ -56,13 +59,5 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-//Proyectos:
-
-
-Route::get('/asignar', [ProjectAssignmentController::class, 'index'])->name('asignar.index');
-Route::get('/asignar/projects', [ProjectAssignmentController::class, 'getProjects'])->name('asignar.projects');
-Route::post('/asignar/assign', [ProjectAssignmentController::class, 'assignUser'])->name('asignar.assign');
-Route::post('/asignar/remove', [ProjectAssignmentController::class, 'removeUser'])->name('asignar.remove');
 
 require __DIR__.'/auth.php';
