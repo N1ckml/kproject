@@ -6,7 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectAssignmentController;
 use App\Http\Controllers\TaskController;
-
+use App\Models\Project;
 use App\Http\Controllers\PhaseController;
 // USUARIOS
 Route::middleware('auth', 'role:admin')->group(function () {
@@ -96,10 +96,16 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/proyectos/{project}/fases', function (Project $project) {
         try {
-            $phases = $project->phases; // Carga las fases relacionadas con el proyecto
+            $phases = $project->phases; // Accede a la relación phases del proyecto
+            
+            if ($phases->isEmpty()) {
+                return response()->json(['message' => 'No hay fases disponibles para este proyecto.'], 404);
+            }
+    
             return response()->json($phases);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Error al cargar fases: ' . $e->getMessage()], 500);
+            // Devuelve el error con detalles
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     })->name('proyectos.fases');
     // Remover tarea de una fase
