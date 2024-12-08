@@ -34,33 +34,28 @@
                 Nueva Tarea
             </button>
 
-           <!-- Modal para Crear Nueva Tarea -->
+<!-- Modal para Crear Nueva Tarea -->
 <div id="createTaskModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-lg p-6 relative">
         <h2 class="text-xl font-bold mb-4 text-gray-900">Crear Nueva Tarea</h2>
         <form id="createTaskForm">
             @csrf
-            <!-- Seleccionar Proyecto -->
             <div class="mb-4">
-                <label for="project_id" class="block text-sm font-medium text-gray-700">Proyecto</label>
-                <select name="project_id" id="project_id" class="w-full px-3 py-2 border rounded-md" required>
-                    <option value="" disabled selected>Seleccione un proyecto</option>
-                    @foreach ($projects as $project)
-                        <option value="{{ $project->id }}">{{ $project->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+    <label for="project_id" class="block text-sm font-medium text-gray-700">Proyecto</label>
+    <select name="project_id" id="project_id" class="w-full px-3 py-2 border rounded-md" required>
+        <option value="" disabled selected>Seleccione un proyecto</option>
+        @foreach ($projects as $project)
+            <option value="{{ $project->id }}">{{ $project->name }}</option>
+        @endforeach
+    </select>
+</div>
 
-            <!-- Seleccionar Fase -->
-            <div class="mb-4">
-                <label for="phase_id" class="block text-sm font-medium text-gray-700">Fase (Opcional)</label>
-                <select name="phase_id" id="phase_id" class="w-full px-3 py-2 border rounded-md">
-                    <option value="" selected>Sin asignar</option>
-                    @foreach ($phases as $phase)
-                        <option value="{{ $phase->id }}">{{ $phase->name }}</option>
-                    @endforeach
-                </select>
-            </div>
+<div class="mb-4">
+    <label for="phase_id" class="block text-sm font-medium text-gray-700">Fase (Opcional)</label>
+    <select name="phase_id" id="phase_id" class="w-full px-3 py-2 border rounded-md">
+        <option value="">Sin asignar</option>
+    </select>
+</div>
 
             <!-- Título -->
             <div class="mb-4">
@@ -92,6 +87,7 @@
     </div>
 </div>
 
+
             <!-- Tabla de Tareas -->
             <div class="overflow-x-auto">
                 <table id="tasks-table" class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border border-gray-200">
@@ -118,149 +114,188 @@
     <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function () {
-            // Inicializar DataTable
-            $('#tasks-table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('tareas.data') }}",
-                columns: [
-                    { data: 'id', name: 'id' },
-                    { data: 'project', name: 'project' },
-                    { data: 'phase', name: 'phase' },
-                    { data: 'title', name: 'title' },
-                    { 
-                        data: 'completed', 
-                        name: 'completed',
-                        render: function (data) {
-                            return data ? 'Completada' : 'Pendiente';
-                        }
-                    },
-                    { 
-                        data: 'actions', 
-                        name: 'actions',
-                        orderable: false,
-                        searchable: false
+    $(document).ready(function () {
+        // Inicializar DataTable
+        $('#tasks-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('tareas.data') }}",
+            columns: [
+                { data: 'id', name: 'id' },
+                { data: 'project', name: 'project' },
+                { data: 'phase', name: 'phase' },
+                { data: 'title', name: 'title' },
+                {
+                    data: 'completed',
+                    name: 'completed',
+                    render: function (data) {
+                        return data ? 'Completada' : 'Pendiente';
                     }
-                ],
-                language: { url: "//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json" }
-            });
+                },
+                {
+                    data: 'actions',
+                    name: 'actions',
+                    orderable: false,
+                    searchable: false
+                }
+            ],
+            language: { url: "//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json" }
         });
 
-        // Abrir modal
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
-        }
+        // Manejar cambios en el select de proyectos al crear tareas
+        $('#project_id').on('change', function () {
+            const projectId = this.value;
+            const phaseSelect = $('#phase_id');
 
-        // Cerrar modal
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        }
+            // Limpiar las opciones anteriores
+            phaseSelect.empty();
+            phaseSelect.append('<option value="">Sin asignar</option>'); // Opción predeterminada
 
-        // Crear tarea
-        function createTask() {
-            const form = document.getElementById('createTaskForm');
-            const formData = new FormData(form);
-
-            fetch('/tareas', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                Swal.fire('Éxito', data.message, 'success');
-                closeModal('createTaskModal');
-                $('#tasks-table').DataTable().ajax.reload();
-            })
-            .catch(error => console.error('Error:', error));
-        }
-
-        function updateTask(taskId) {
-    const form = document.getElementById(`editForm-${taskId}`);
-    const formData = new FormData(form);
-    formData.append('_method', 'PUT'); // Simula el método PUT
-
-    fetch(`/tareas/${taskId}`, {
-        method: 'POST', // Usa POST en lugar de PUT
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        },
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            if (projectId) {
+                fetch(`/proyectos/${projectId}/fases`)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.length === 0) {
+                            phaseSelect.append('<option disabled>No hay fases disponibles</option>');
+                        } else {
+                            data.forEach(phase => {
+                                phaseSelect.append(`<option value="${phase.id}">${phase.name}</option>`);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar las fases:', error);
+                        Swal.fire('Error', 'No se pudieron cargar las fases del proyecto.', 'error');
+                    });
             }
+        });
+    });
+
+    // Abrir modal
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    // Cerrar modal
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+    }
+
+    // Crear tarea
+    function createTask() {
+        const form = document.getElementById('createTaskForm');
+        const formData = new FormData(form);
+
+        fetch('/tareas', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
         })
-        .then((data) => {
+        .then(data => {
+            Swal.fire('Éxito', data.message, 'success');
+            closeModal('createTaskModal');
+            $('#tasks-table').DataTable().ajax.reload();
+        })
+        .catch(error => {
+            console.error('Error al crear tarea:', error);
+            Swal.fire('Error', 'No se pudo crear la tarea.', 'error');
+        });
+    }
+
+    // Actualizar tarea
+    function updateTask(taskId) {
+        const form = document.getElementById(`editForm-${taskId}`);
+        const formData = new FormData(form);
+        formData.append('_method', 'PUT');
+
+        fetch(`/tareas/${taskId}`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
             Swal.fire('Éxito', data.message, 'success');
             closeModal(`editModal-${taskId}`);
-            $('#tasks-table').DataTable().ajax.reload(); // Recarga la tabla
+            $('#tasks-table').DataTable().ajax.reload();
         })
-        .catch((error) => {
-            console.error('Error:', error);
+        .catch(error => {
+            console.error('Error al actualizar tarea:', error);
             Swal.fire('Error', 'No se pudo actualizar la tarea.', 'error');
         });
-}
-        // Eliminar tarea
-        function deleteTask(taskId) {
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: 'Esta acción no se puede deshacer.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-            }).then(result => {
-                if (result.isConfirmed) {
-                    fetch(`/tareas/${taskId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        },
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        Swal.fire('Eliminado', data.message, 'success');
-                        $('#tasks-table').DataTable().ajax.reload();
-                    })
-                    .catch(error => console.error('Error:', error));
-                }
-            });
-        }
+    }
 
-        // Mover tarea
-        function moveTask(taskId) {
-    const form = document.getElementById(`moveForm-${taskId}`);
-    const formData = new FormData(form);
-
-    fetch(`/tareas/${taskId}/assign-phase`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        },
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+    // Eliminar tarea
+    function deleteTask(taskId) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: 'Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+        }).then(result => {
+            if (result.isConfirmed) {
+                fetch(`/tareas/${taskId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    },
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire('Eliminado', data.message, 'success');
+                    $('#tasks-table').DataTable().ajax.reload();
+                })
+                .catch(error => console.error('Error al eliminar tarea:', error));
             }
+        });
+    }
+
+    // Mover tarea
+    function moveTask(taskId) {
+        const form = document.getElementById(`moveForm-${taskId}`);
+        const formData = new FormData(form);
+
+        fetch(`/tareas/${taskId}/assign-phase`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
         })
-        .then((data) => {
+        .then(data => {
             Swal.fire('Éxito', data.message, 'success');
             closeModal(`moveModal-${taskId}`);
-            $('#tasks-table').DataTable().ajax.reload(); // Recargar tabla
+            $('#tasks-table').DataTable().ajax.reload();
         })
-        .catch((error) => {
-            console.error('Error:', error);
+        .catch(error => {
+            console.error('Error al mover tarea:', error);
             Swal.fire('Error', 'No se pudo mover la tarea.', 'error');
         });
-}
-    </script>
+    }
+</script>
+
 </body>
 </html>

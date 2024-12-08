@@ -94,6 +94,14 @@ Route::middleware(['auth'])->group(function () {
     // Asignar tarea a una fase
     Route::post('/tareas/{task}/assign-phase', [TaskController::class, 'assignPhase'])->name('tareas.assignPhase');
 
+    Route::get('/proyectos/{project}/fases', function (Project $project) {
+        try {
+            $phases = $project->phases; // Carga las fases relacionadas con el proyecto
+            return response()->json($phases);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error al cargar fases: ' . $e->getMessage()], 500);
+        }
+    })->name('proyectos.fases');
     // Remover tarea de una fase
     Route::post('/tareas/{task}/remove-phase', [TaskController::class, 'removePhase'])->name('tareas.removePhase');
 });
