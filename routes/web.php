@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectAssignmentController;
 use App\Http\Controllers\TaskController;
+
 use App\Http\Controllers\PhaseController;
 // USUARIOS
 Route::middleware('auth', 'role:admin')->group(function () {
@@ -27,8 +28,21 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::delete('/proyectos/{id}', [ProjectController::class, 'destroy'])->name('proyectos.destroy');
 
     //Route::get('/fases', [PhaseController::class, 'index'])->name('fases.index');
-    //Route::get('/tareas', [TaksController::class, 'index'])->name('tareas.index');
+    Route::get('/tareas', [TaksController::class, 'index'])->name('tareas.index');
     //Route::get('/asignar', [AssignController::class, 'index'])->name('asignar.index');
+    Route::get('/asignar', [ProjectAssignmentController::class, 'index'])->name('asignar.index');
+    Route::get('/asignar/projects', [ProjectAssignmentController::class, 'getProjects'])->name('asignar.projects');
+    Route::post('/asignar/assign', [ProjectAssignmentController::class, 'assignUser'])->name('asignar.assign');
+    Route::post('/asignar/remove', [ProjectAssignmentController::class, 'removeUser'])->name('asignar.remove');
+
+    // Rutas para Fases
+    Route::get('/fases', [PhaseController::class, 'index'])->name('fases.index');
+    Route::get('/fases/data', [PhaseController::class, 'getData'])->name('fases.data'); // Ruta para obtener las fases para DataTables
+    Route::post('/fases', [PhaseController::class, 'store'])->name('fases.store');
+    Route::get('/fases/{id}', [PhaseController::class, 'show'])->name('fases.show');
+    Route::put('/fases/{id}', [PhaseController::class, 'update'])->name('fases.update');
+    Route::delete('/fases/{id}', [PhaseController::class, 'destroy'])->name('fases.destroy');
+    //Route::get('/tareas', [TaksController::class, 'index'])->name('tareas.index');
 });
 
 
@@ -58,5 +72,30 @@ Route::get('/asignar', [ProjectAssignmentController::class, 'index'])->name('asi
 Route::get('/asignar/projects', [ProjectAssignmentController::class, 'getProjects'])->name('asignar.projects');
 Route::post('/asignar/assign', [ProjectAssignmentController::class, 'assignUser'])->name('asignar.assign');
 Route::post('/asignar/remove', [ProjectAssignmentController::class, 'removeUser'])->name('asignar.remove');
+
+
+
+Route::middleware(['auth'])->group(function () {
+    // Vista principal de tareas
+    Route::get('/tareas', [TaskController::class, 'index'])->name('tareas.index');
+
+    // Datos para la tabla (DataTables)
+    Route::get('/tareas/data', [TaskController::class, 'getTasks'])->name('tareas.data');
+
+    // Crear tarea
+    Route::post('/tareas', [TaskController::class, 'store'])->name('tareas.store');
+
+    // Actualizar tarea
+    Route::put('/tareas/{task}', [TaskController::class, 'update'])->name('tareas.update');
+
+    // Eliminar tarea
+    Route::delete('/tareas/{task}', [TaskController::class, 'destroy'])->name('tareas.destroy');
+
+    // Asignar tarea a una fase
+    Route::post('/tareas/{task}/assign-phase', [TaskController::class, 'assignPhase'])->name('tareas.assignPhase');
+
+    // Remover tarea de una fase
+    Route::post('/tareas/{task}/remove-phase', [TaskController::class, 'removePhase'])->name('tareas.removePhase');
+});
 
 require __DIR__.'/auth.php';
