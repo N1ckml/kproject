@@ -174,76 +174,150 @@
                     </ul>
                 @endif
             </section>
-
-
-
-            <!-- section content -->
-            <section aria-label="main content" class="flex min-h-0 flex-col flex-auto border-l">
-                <table aria-describedby="info-popup" aria-label="open tickets"
-                    class="border-t w-full min-h-0 h-full flex flex-col">
-                    <tbody class="flex w-full flex-col flex-1 min-h-0 overflow-hidden px-4">
-<!-- Modal -->
-<div id="projectModal" class="fixed inset-0 z-50 hidden bg-gray-800 bg-opacity-75 flex items-center justify-center">
-    <div class="bg-white p-6 rounded-lg w-2/3 max-w-4xl">
-        <h2 id="modalTitle" class="text-xl font-bold mb-4">Detalles del Proyecto</h2>
-        <div id="modalContent" class="overflow-y-auto max-h-96">
-            <!-- Aquí se llenarán dinámicamente los detalles del proyecto -->
+<!-- Sección de contenido principal -->
+<section aria-label="main content" class="flex min-h-0 flex-col flex-auto border-l">
+    <!-- Aquí se cargarán dinámicamente los detalles del proyecto -->
+    <div id="projectContent" class="p-6">
+        <h2 id="projectTitle" class="text-2xl font-bold mb-4">Selecciona un proyecto para ver sus detalles</h2>
+        <div id="projectDetails" class="shadow-lg rounded-lg overflow-hidden bg-white overflow-auto max-h-[80vh] max-w-full">
+            <!-- Aquí se llenará dinámicamente el contenido del proyecto -->
         </div>
-        <button
-            class="bg-red-500 text-white px-4 py-2 mt-4 rounded hover:bg-red-600"
-            onclick="closeModal()">
-            Cerrar
-        </button>
     </div>
-</div>
+</section>
+
+<script>
+function loadProject(projectId) {
+    fetch(`/projects/${projectId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al cargar el proyecto.');
+            }
+            return response.json();
+        })
+        .then(project => {
+            // Configurar el título del proyecto
+            document.getElementById('projectTitle').textContent = `Detalles del Proyecto: ${project.name}`;
+
+            // Crear las cabeceras de las fases
+            let table = `
+                <table class="w-full table-fixed border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            ${project.phases.map(phase => `
+                                <th class="w-1/${project.phases.length} py-4 px-6 text-center text-gray-600 font-bold uppercase border border-gray-300">
+                                    ${phase.name}
+                                </th>
+                            `).join('')}
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white">
+            `;
+
+            // Calcular el número máximo de tareas
+            const maxTasks = Math.max(...project.phases.map(phase => phase.tasks.length));
+
+            // Crear las filas de tareas
+            for (let i = 0; i < maxTasks; i++) {
+                table += '<tr>';
+                project.phases.forEach(phase => {
+                    const task = phase.tasks[i];
+                    table += `
+                        <td class="py-2 px-4 text-center align-top">
+                            ${task ? `
+                                <div class="task-card border border-gray-300 rounded shadow-sm bg-gray-50">
+                                    <p class="font-semibold text-sm">${task.title}</p>
+                                    <span class="${task.completed ? 'bg-green-500' : 'bg-red-500'} text-white py-1 px-2 rounded-full text-xs">
+                                        ${task.completed ? 'Completado' : 'Pendiente'}
+                                    </span>
+                                </div>
+                            ` : ''}
+                        </td>
+                    `;
+                });
+                table += '</tr>';
+            }
+
+            table += `
                     </tbody>
                 </table>
-            </section>
-        </main>
-    </div>
+            `;
 
-    <script>
-    function loadProject(projectId) {
-        fetch(`/projects/${projectId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error al cargar el proyecto.');
-                }
-                return response.json();
-            })
-            .then(project => {
-                // Llenar el contenido del modal
-                document.getElementById('modalTitle').textContent = project.name;
-                let content = `
-                    <p><strong>Descripción:</strong> ${project.description}</p>
-                    <p><strong>Fases:</strong></p>
-                    <ul>
-                `;
-                project.phases.forEach(phase => {
-                    content += `
-                        <li>
-                            <strong>${phase.name}:</strong> ${phase.description}
-                            <ul>
-                    `;
-                    phase.tasks.forEach(task => {
-                        content += `<li>${task.title} - ${task.completed ? '✔' : '❌'}</li>`;
-                    });
-                    content += '</ul></li>';
-                });
-                content += '</ul>';
-                document.getElementById('modalContent').innerHTML = content;
-
-                // Mostrar el modal
-                document.getElementById('projectModal').classList.remove('hidden');
-            })
-            .catch(error => {
-                alert(error.message);
-            });
-    }
-
-    function closeModal() {
-        document.getElementById('projectModal').classList.add('hidden');
-    }
+            // Asignar el contenido generado al contenedor de detalles del proyecto
+            document.getElementById('projectDetails').innerHTML = table;
+        })
+        .catch(error => {
+            alert(error.message);
+        });
+}
 </script>
+
+<style>
+/* Estilo adicional para las tareas */
+.task-card {
+    width: 150px; /* Ancho fijo */
+    height: 110px; /* Alto fijo ajustado */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0px; /* Reducir espacio entre tarjetas */
+    transition: background-color 0.3s ease; /* Efecto de transición para el hover */
+}
+
+/* Hover para las tareas */
+.task-card:hover {
+    background-color: #d9fdd3; /* Verde pastel claro */
+}
+
+/* Estilo de la tabla */
+.table-fixed {
+    table-layout: fixed; /* Estilo de tabla fija */
+}
+
+.text-center {
+    text-align: center;
+}
+
+.border-collapse {
+    border-collapse: collapse; /* Elimina líneas duplicadas */
+}
+
+.table thead th {
+    background-color: #f8f9fa; /* Color de fondo del encabezado */
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Asegura que las celdas tengan alineación superior */
+.align-top {
+    vertical-align: top;
+}
+
+/* Estilo para el contenedor del proyecto */
+#projectDetails {
+    overflow: auto; /* Habilitar scroll para el contenido */
+    max-height: 80vh; /* Altura máxima de 80% de la ventana */
+    max-width: 100%; /* Asegurar que no se desborde horizontalmente */
+    padding: 1rem; /* Espaciado interno */
+    scrollbar-width: thin; /* Barra de desplazamiento más delgada */
+    scrollbar-color: #ccc #f8f9fa; /* Colores de la barra de desplazamiento */
+}
+
+/* Estilo para la barra de desplazamiento */
+#projectDetails::-webkit-scrollbar {
+    width: 8px; /* Ancho del scroll horizontal */
+    height: 8px; /* Altura del scroll vertical */
+}
+
+#projectDetails::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* Color del "thumb" del scroll */
+    border-radius: 4px; /* Bordes redondeados */
+}
+
+#projectDetails::-webkit-scrollbar-track {
+    background-color: #f8f9fa; /* Fondo de la barra de desplazamiento */
+}
+
+</style>
 </body>
                     
