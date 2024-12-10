@@ -146,72 +146,104 @@
 
         <!-- main content -->
         <main class="flex-grow flex min-h-0 border-t">
-            <!-- section update to proyects -->
             <section class="flex flex-col p-4 w-full max-w-sm flex-none bg-gray-100 min-h-0 overflow-auto">
-                <h1 class="font-semibold mb-3">
-                    Updates to your Proyects
-                </h1>
-                <ul>
-                    <li>
-                        <article tabindex="0"
-                            class="cursor-pointer border rounded-md p-3 bg-white flex text-gray-700 mb-2 hover:border-green-500 focus:outline-none focus:border-green-500">
-                            <span class="flex-none pt-1 pr-2">
-                                <img class="h-8 w-8 rounded-md" src="https://raw.githubusercontent.com/bluebrown/tailwind-zendesk-clone/master/public/assets/avatar.png" />
-                            </span>
-                            <div class="flex-1">
-                                <header class="mb-1">
-                                    Tarun T <span class="font-semibold">commented</span> on
-                                    <h1 class="inline">"RE: WPMS issue".</h1>
-                                </header>
-                                <p class="text-gray-600">
-                                    Hi Mazhar, Please note this issue comes when user is not
-                                    closing or logout sy…
-                                </p>
-                                <footer class="text-gray-500 mt-2 text-sm">
-                                    Friday 22:16
-                                </footer>
-                            </div>
-                        </article>
-                    </li> 
-                </ul>
+                <h1 class="font-semibold mb-3">Tus Proyectos</h1>
+                @if($projects->isEmpty())
+                    <p>No tienes proyectos asignados.</p>
+                @else
+                    <ul>
+                    @foreach($projects as $project)
+                        <li class="mb-2">
+                            <article 
+                                onclick="loadProject({{ $project->id }})"
+                                class="cursor-pointer border rounded-md p-3 bg-white flex text-gray-700 hover:border-green-500 focus:outline-none focus:border-green-500">
+                                <div class="flex-1">
+                                    <header class="mb-1">
+                                        <h1 class="font-semibold">{{ $project->name }}</h1>
+                                    </header>
+                                    <p class="text-gray-600">
+                                        {{ $project->description }}
+                                    </p>
+                                    <footer class="text-gray-500 mt-2 text-sm">
+                                        Creado el: {{ $project->created_at->format('d/m/Y') }}
+                                    </footer>
+                                </div>
+                            </article>
+                        </li>
+                    @endforeach
+                    </ul>
+                @endif
             </section>
+
+
+
             <!-- section content -->
             <section aria-label="main content" class="flex min-h-0 flex-col flex-auto border-l">
-                <!-- content navigation -->
-                <nav class="bg-gray-100 flex p-4">
-                    <!-- open projects nav -->
-                    <section aria-labelledby="open-tickets-tabs-label" class="mr-4 focus:outline-none">
-                        <label id="open-tickets-tabs-label" class="font-semibold block mb-1 text-sm">Open Projects
-                            <span class="font-normal text-gray-700">(current)</span>
-                        </label>
-                        <ul class="flex">
-                            <li>
-                                <button class="focus:outline-none focus:bg-yellow-200 p-2 rounded-l-md border border-r-0 bg-white flex flex-col items-center w-24">
-                                    <p class="font-semibold text-lg">6</p>
-                                    <p class="text-sm uppercase text-gray-600">
-                                        You
-                                    </p>
-                                </button>
-                            </li>
-                            <li>
-                                <button class="focus:outline-none focus:bg-yellow-200 p-2 border rounded-r-md bg-white flex flex-col items-center w-24 cursor-pointer">
-                                    <p class="font-semibold text-lg">23</p>
-                                    <p class="text-sm uppercase text-gray-600">
-                                        Groups
-                                    </p>
-                                </button>
-                            </li>
-                        </ul>
-                    </section>
-                </nav>
                 <table aria-describedby="info-popup" aria-label="open tickets"
                     class="border-t w-full min-h-0 h-full flex flex-col">
                     <tbody class="flex w-full flex-col flex-1 min-h-0 overflow-hidden px-4">
-
+<!-- Modal -->
+<div id="projectModal" class="fixed inset-0 z-50 hidden bg-gray-800 bg-opacity-75 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg w-2/3 max-w-4xl">
+        <h2 id="modalTitle" class="text-xl font-bold mb-4">Detalles del Proyecto</h2>
+        <div id="modalContent" class="overflow-y-auto max-h-96">
+            <!-- Aquí se llenarán dinámicamente los detalles del proyecto -->
+        </div>
+        <button
+            class="bg-red-500 text-white px-4 py-2 mt-4 rounded hover:bg-red-600"
+            onclick="closeModal()">
+            Cerrar
+        </button>
+    </div>
+</div>
                     </tbody>
                 </table>
             </section>
         </main>
     </div>
+
+    <script>
+    function loadProject(projectId) {
+        fetch(`/projects/${projectId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error al cargar el proyecto.');
+                }
+                return response.json();
+            })
+            .then(project => {
+                // Llenar el contenido del modal
+                document.getElementById('modalTitle').textContent = project.name;
+                let content = `
+                    <p><strong>Descripción:</strong> ${project.description}</p>
+                    <p><strong>Fases:</strong></p>
+                    <ul>
+                `;
+                project.phases.forEach(phase => {
+                    content += `
+                        <li>
+                            <strong>${phase.name}:</strong> ${phase.description}
+                            <ul>
+                    `;
+                    phase.tasks.forEach(task => {
+                        content += `<li>${task.title} - ${task.completed ? '✔' : '❌'}</li>`;
+                    });
+                    content += '</ul></li>';
+                });
+                content += '</ul>';
+                document.getElementById('modalContent').innerHTML = content;
+
+                // Mostrar el modal
+                document.getElementById('projectModal').classList.remove('hidden');
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+    }
+
+    function closeModal() {
+        document.getElementById('projectModal').classList.add('hidden');
+    }
+</script>
 </body>
                     

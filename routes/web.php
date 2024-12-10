@@ -8,6 +8,7 @@ use App\Http\Controllers\ProjectAssignmentController;
 use App\Http\Controllers\TaskController;
 use App\Models\Project;
 use App\Http\Controllers\PhaseController;
+use App\Http\Controllers\UserProjectsController;
 // USUARIOS
 Route::middleware('auth', 'role:admin')->group(function () {
 
@@ -45,14 +46,17 @@ Route::middleware('auth', 'role:admin')->group(function () {
     //Route::get('/tareas', [TaksController::class, 'index'])->name('tareas.index');
 });
 
-
 Route::get('/tareas', function () {
     return view('tareas.index');
 })->name('tareas.index');
 
 Route::middleware('auth', 'role:user')->group(function () {
-    Route::view('/home-users', 'home-users')->name('home-users'); // Asegúrate de que `home-users.blade.php` esté en `resources/views`
+    //Route::view('/home-users', 'home-users')->name('home-users'); // Asegúrate de que `home-users.blade.php` esté en `resources/views`
+    Route::get('/home-users', [UserProjectsController::class, 'index'])->name('home-users');
+    Route::get('/projects/{project}', [UserProjectsController::class, 'show'])->name('projects.show');
+
 });
+
 
 Route::get('/', function () {
     return view('welcome');

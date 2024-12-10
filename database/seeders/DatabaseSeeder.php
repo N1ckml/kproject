@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Seeders;
-use App\Models\Task;
+//use App\Models\Task;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -21,6 +21,6 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('12345678'), // Contraseña encriptada
             'role' => User::ROLE_ADMIN, // Rol asignado como administrador
         ]);
-        Task::factory(50)->create();
+        //Task::factory(50)->create();
 }
 }
