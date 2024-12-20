@@ -5,8 +5,8 @@
     <div class="py-16">
         <div class="flex bg-white rounded-lg shadow-lg overflow-hidden mx-auto max-w-sm lg:max-w-4xl">
             <div class="w-full p-8">
-                <h2 class="text-2xl font-semibold text-gray-700 text-center">Proyecto K</h2>
-                <p class="text-xl text-gray-600 text-center">Bienvenido!</p>
+                <h2 class="text-2xl font-semibold text-gray-700 text-center"> Creditos & Cobranzas</h2>
+                <p class="text-xl text-gray-600 text-center">Gestion de Proyectos</p>
 
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
@@ -23,7 +23,7 @@
                         <div class="flex justify-between">
                             <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
                             @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}" class="text-xs text-gray-500">¿Olvidaste tu contraseña?</a>
+                                <a href="{{ route('password.request') }}" class="text-xs text-gray-500"></a>
                             @endif
                         </div>
                         <input id="password" name="password" type="password" required autocomplete="current-password"
@@ -48,7 +48,7 @@
 
                 <div class="mt-4 flex items-center justify-between">
                     <span class="border-b w-1/5 md:w-1/4"></span>
-                    <a href="{{ route('register') }}" class="text-xs text-gray-500 uppercase">o regístrate</a>
+                    <a href="{{ route('register') }}" class="text-xs text-gray-500 uppercase"></a>
                     <span class="border-b w-1/5 md:w-1/4"></span>
                 </div>
             </div>

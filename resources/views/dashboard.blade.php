@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @vite('resources/css/app.css')
-    <title>KPROYECT</title>
+    <title>CREDITO & COBRANZAS</title>
 </head>
 <body class="antialiased bg-gray-50 dark:bg-gray-300 flex">
 
